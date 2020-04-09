@@ -1,12 +1,12 @@
 {
-  "name": "vpgrp-influxdb",
-  "version": "1.4.0",
-  "author": "vpgrp",
+  "name": "caherrera-influxdb",
+  "version": "1.4.1",
+  "author": "caherrera",
   "summary": "Puppet module to install, deploy and configure InfluxDB.",
-  "license": "ISC",
-  "source": "https://github.com/veepee-puppet/puppet-influxdb",
-  "project_page": "https://github.com/veepee-puppet/puppet-influxdb",
-  "issues_url": "https://github.com/veepee-puppet/puppet-influxdb/issues",
+  "license": "MIT",
+  "source": "https://github.com/caherrera/puppet-influxdb",
+  "project_page": "https://github.com/caherrera/puppet-influxdb",
+  "issues_url": "https://github.com/caherrera/puppet-influxdb/issues",
   "dependencies": [
     {
       "name": "puppetlabs/apt",
