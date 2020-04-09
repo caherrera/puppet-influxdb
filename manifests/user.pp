@@ -10,6 +10,7 @@ define influxdb::user (
   $admin_username                   = $influxdb::admin_username,
   $admin_password                   = $influxdb::admin_password
 ) {
+
   if $https_enable {
     $cmd = 'influx -ssl -unsafeSsl'
   } else {
@@ -66,5 +67,7 @@ define influxdb::user (
         grep -x ${db_user}"
     }
   }
+
+
 }
 # EOF

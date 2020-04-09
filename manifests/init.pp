@@ -7,13 +7,11 @@ class influxdb (
   $service                            = true,
   $enable                             = true,
   $manage_repo                        = true,
-  $apt_location                       = $influxdb::params::apt_location,
-  $apt_release                        = $influxdb::params::apt_release,
-  $apt_repos                          = $influxdb::params::apt_repos,
-  $apt_key                            = $influxdb::params::apt_key,
   $influxdb_package_name              = $influxdb::params::influxdb_package_name,
   $influxdb_service_name              = $influxdb::params::influxdb_service_name,
   $influxdb_service_provider          = $influxdb::params::influxdb_service_provider,
+  $influxdb_config_file               = $influxdb::params::influxdb_config_file,
+  $influxdb_config_dir                = $influxdb::params::influxdb_config_dir,
   # daemon settings
   $hostname                           = $::fqdn,
   $libdir                             = $influxdb::params::libdir,
@@ -48,25 +46,22 @@ class influxdb (
 
 ) inherits influxdb::params {
   case $package {
-    true    : { $ensure_package = 'present' }
-    false   : { $ensure_package = 'purged' }
-    latest  : { $ensure_package = 'latest' }
-    default : { fail('package must be true, false or latest') }
+    true: { $ensure_package = 'present' }
+    false: { $ensure_package = 'purged' }
+    latest: { $ensure_package = 'latest' }
+    default: { fail('package must be true, false or latest') }
   }
 
   case $service {
-    true    : { $ensure_service = 'running' }
-    false   : { $ensure_service = 'stopped' }
-    running : { $ensure_service = 'running' }
-    default : { fail('service must be true, false or running') }
+    true: { $ensure_service = 'running' }
+    false: { $ensure_service = 'stopped' }
+    running: { $ensure_service = 'running' }
+    default: { fail('service must be true, false or running') }
   }
 
   if ($manage_repo == true) {
     class { 'influxdb::repos':
-      apt_location          => $apt_location,
-      apt_release           => $apt_release,
-      apt_repos             => $apt_repos,
-      apt_key               => $apt_key,
+
       influxdb_package_name => $influxdb_package_name,
       influxdb_service_name => $influxdb_service_name,
     }
@@ -78,7 +73,7 @@ class influxdb (
   }
   else {
     package { $influxdb_package_name:
-      ensure  => $ensure_package
+      ensure => $ensure_package
     }
   }
 
@@ -92,25 +87,24 @@ class influxdb (
   }
 
   if $ensure_service == 'running' {
-      exec { 'wait_for_influxdb_to_listen':
-        command   => 'influx -execute quit',
-        unless    => 'influx -execute quit',
-        tries     => '3',
-        try_sleep => '10',
-        require   => Service[$influxdb_service_name],
-        path      => '/bin:/usr/bin',
-      }
+    exec { 'wait_for_influxdb_to_listen':
+      command   => 'influx -execute quit',
+      unless    => 'influx -execute quit',
+      tries     => '3',
+      try_sleep => '10',
+      require   => Service[$influxdb_service_name],
+      path      => '/bin:/usr/bin',
+    }
   }
 
-  file { '/etc/influxdb/influxdb.conf':
-    ensure  => $ensure_package,
-    path    => '/etc/influxdb/influxdb.conf',
-    owner   => 'root',
-    group   => 'root',
-    mode    => '0644',
-    content => template('influxdb/influxdb.conf.erb'),
-    require => Package[$influxdb_package_name[0]],
-    notify  => Service[$influxdb_service_name],
+  file { $influxdb_config_dir:
+    ensure => 'directory'
+  } ->
+
+  influxdb::config { 'default':
+    require => Service[$influxdb_service_name],
   }
+
+
 }
 # EOF

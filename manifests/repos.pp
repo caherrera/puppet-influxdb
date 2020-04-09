@@ -53,11 +53,11 @@ class influxdb::repos (
         mode    => '0644',
       }
 
-      exec { 'influxdb yum update':
-        command   => 'yum update -q -y',
-        path      => [ '/usr/bin', '/usr/sbin', '/bin', '/sbin' ],
-        subscribe => File['/etc/yum.repos.d/influxdb.repo'],
-      }
+      # exec { 'influxdb yum update':
+      #   command   => 'yum update -q -y',
+      #   path      => [ '/usr/bin', '/usr/sbin', '/bin', '/sbin' ],
+      #   subscribe => File['/etc/yum.repos.d/influxdb.repo'],
+      # }
     }
     default                    : {
       fail("Module ${module_name} \

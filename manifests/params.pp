@@ -2,6 +2,8 @@
 #
 class influxdb::params {
   $libdir                             = '/var/lib/influxdb'
+  $influxdb_config_dir                = '/etc/influxdb'
+  $influxdb_config_file               = 'influxdb.conf'
   $admin_enable                       = false
   $admin_bind_address                 = '0.0.0.0:8083'
   $admin_username                     = 'admin'
